@@ -34,7 +34,7 @@ start-minikube:
 latest-backend-image:
 	@echo "Building latest backend image with timestamp..."
 	eval $$(minikube -p minikube docker-env) && \
-	docker build -t python-flask-server:$(TIMESTAMP) ./backend/python-flask-server-generated && \
+	docker build -t python-flask-server:$(TIMESTAMP) ./backend && \
 	kubectl set image deployment/python-flask-server python-flask-server=python-flask-server:$(TIMESTAMP) --namespace $(NAMESPACE)
 	kubectl set image deployment/rq-worker rq-worker=python-flask-server:$(TIMESTAMP) --namespace $(NAMESPACE)
 
