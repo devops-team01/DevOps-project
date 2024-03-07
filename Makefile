@@ -1,6 +1,8 @@
 CONFIG_FILES := ./dev_deployment/flask-deployment.yml ./dev_deployment/mongodb-deployment.yml ./dev_deployment/job-creator-role.yaml ./dev_deployment/job-creator-role-binding.yaml ./dev_deployment/redis_deployment.yml ./dev_deployment/rq-worker-deployment.yml
 NAMESPACE := default
 
+PROM_CONFIG := ./dev_deployment/prometheus-deployment.yml
+
 KB-INDEXER := kb-indexer:latest
 TIMESTAMP := $(shell date +%Y%m%d%H%M%S)
 
@@ -8,6 +10,8 @@ k8: start-minikube \
 	apply-configs \
 	latest-backend-image \
 	latest-kb-indexer-image\
+	start-monitoring\
+
 
 	minikube service python-flask-server --url
 
@@ -25,6 +29,8 @@ start-minikube:
 		echo "Minikube is already running."; \
 	else \
 		echo "Starting Minikube..."; \
+		minikube config set memory 6000; \
+		minikube config set cpus 4; \
 		minikube start --driver=docker; \
 		echo "Configuring local Docker client to use Minikube's Docker daemon..."; \
 	fi
@@ -50,6 +56,14 @@ latest-kb-indexer-image:
 apply-configs:
 	@echo "Applying Kubernetes configurations..."
 	$(foreach file,$(CONFIG_FILES),kubectl apply -f $(file) --namespace $(NAMESPACE);)
+
+# Deploy prometheus and grafana under namespace "monitoring"
+start-monitoring:
+	kubectl delete namespace monitoring --ignore-not-found=true
+	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	helm repo update
+	kubectl create namespace monitoring
+	helm install -f $(PROM_CONFIG) prometheus prometheus-community/kube-prometheus-stack --namespace monitoring
 
 # Setup your environment (placeholder for any setup commands you need)
 setup: 

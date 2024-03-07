@@ -1,8 +1,10 @@
-server:
+grafana:
   image:
-    repository: prom/prometheus
+    repository: grafana/grafana
     tag: latest
   service:
-    type: NodePort # Change to loadbalancer when working with AWS
-    port: 9090
-    nodePort: 30090
+    type: NodePort
+    port: 3000
+    nodePort: 30091
+  deploymentStrategy:
+    type: Recreate
