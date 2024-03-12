@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Deploy helm chart
+      kubernetes.core.helm:
+        name: kms
+        chart_ref: ../dev_deployment/kms-generic-helm-charts-0.1.1.tgz
+        kubeconfig: azure-config
+        values_files:
+          - azure-k8s-values.yml
+        release_namespace: kms
+        create_namespace: true
+    
+    
+

@@ -1,0 +1,40 @@
+---
+- name: Create Azure K8s Service
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: kb-indexer
+    location: eastus
+    cluster_name: kb-indexer-cluster
+    username: jorrit.kroes@student.uva.nl
+    ssh_key: "your_ssh_key"
+    client_id: "your_client_id"
+    client_secret: "your_client_secret"
+    aks_version: 1.27.9
+  tasks:
+  - name: Create resource group for k8s
+    azure_rm_resourcegroup:
+      name: "{{ resource_group }}"
+      location: "{{ location }}"
+      state: present
+
+  - name: Create K8s (AKS) cluster
+    azure_rm_aks:
+      name: "{{ cluster_name }}"
+      location: "{{ location }}"
+      resource_group: "{{ resource_group }}"
+      dns_prefix: "{{ aks_name }}"
+      kubernetes_version: "{{aks_version}}"
+      linux_profile:
+        admin_username: "{{ username }}"
+        ssh_key: "{{ ssh_key }}"
+      service_principal:
+        client_id: "{{ client_id }}"
+        client_secret: "{{ client_secret }}"
+      agent_pool_profiles:
+        - name: default
+          count: 2
+          vm_size: Standard_D2_v2
+      tags:
+        Environment: Production
+
