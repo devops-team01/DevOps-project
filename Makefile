@@ -1,4 +1,4 @@
-CONFIG_FILES := ./dev_deployment/flask-deployment.yml ./dev_deployment/mongodb-deployment.yml ./dev_deployment/job-creator-role.yaml ./dev_deployment/job-creator-role-binding.yaml ./dev_deployment/redis_deployment.yml ./dev_deployment/rq-worker-deployment.yml
+CONFIG_FILES := ./dev_deployment/flask-deployment.yml ./dev_deployment/mongodb-deployment.yml ./dev_deployment/job-creator-role.yaml ./dev_deployment/job-creator-role-binding.yaml ./dev_deployment/redis_deployment.yml ./dev_deployment/rq-worker-deployment.yml ./dev_deployment/elastic-search.yml
 NAMESPACE := default
 
 PROM_CONFIG := ./dev_deployment/prometheus-deployment.yml
