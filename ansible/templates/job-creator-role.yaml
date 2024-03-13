@@ -1,8 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
+  namespace: default
   name: job-creator-role
 rules:
 - apiGroups: ["batch"]
   resources: ["jobs"]
   verbs: ["create", "get", "list", "watch", "delete"]
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "list", "watch"]
