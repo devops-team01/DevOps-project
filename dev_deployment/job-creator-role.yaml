@@ -5,7 +5,7 @@ metadata:
   name: job-creator-role
 rules:
 - apiGroups: ["batch"]
-  resources: ["jobs"]
+  resources: ["jobs", cronjobs]
   verbs: ["create", "get", "list", "watch", "delete"]
 - apiGroups: [""]
   resources: ["pods", "pods/log"]
