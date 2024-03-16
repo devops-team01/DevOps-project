@@ -43,7 +43,7 @@
     
     - name: "Deploy elastic secret"
       kubernetes.core.k8s:
-        src: "templates/charts/elastic-secret.yml"
+        definition: "{{ lookup('file', 'templates/charts/elastic-secret.yml') | from_yaml }}"
         namespace: "{{ app_namespace }}"
         kubeconfig: azure-config
     
