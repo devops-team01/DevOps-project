@@ -47,6 +47,18 @@
         namespace: "{{ app_namespace }}"
         kubeconfig: azure-config
     
+    - name: "Deploy jwt token secret"
+    kubernetes.core.k8s:
+      definition: "{{ lookup('file', 'templates/charts/token-secret.yml') | from_yaml }}"
+      namespace: "{{ app_namespace }}"
+      kubeconfig: azure-config
+
+    - name: "Deploy login secret"
+    kubernetes.core.k8s:
+      definition: "{{ lookup('file', 'templates/charts/login-secret.yml') | from_yaml }}"
+      namespace: "{{ app_namespace }}"
+      kubeconfig: azure-config
+    
     - name: "Deploy elasticsearch instance"
       kubernetes.core.helm:
         name: elastic

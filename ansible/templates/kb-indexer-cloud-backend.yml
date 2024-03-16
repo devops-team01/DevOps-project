@@ -18,6 +18,29 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080 
+        env:
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: token-secret
+              key: jwt_key
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: token-secret
+              key: key
+
+        - name: DASHBOARD_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: login-secret
+              key: username
+        - name: DASHBOARD_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: login-secret
+              key: password
+
   strategy:
     type: RollingUpdate
     rollingUpdate:
