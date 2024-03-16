@@ -11,13 +11,23 @@ spec:
     metadata:
       labels:
         app: python-flask-server
-    spec: #TODO fix this is stupid
+    spec:
       containers:
       - name: python-flask-server
         image: python-flask-server
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080 
+        env:
+        - name: JWT_SECRET_KEY
+          value: "secret-key"
+        - name: SECRET_KEY
+          value: "secret-key"
+        - name: DASHBOARD_USERNAME
+          value: "admin"
+        - name: DASHBOARD_PASSWORD
+          value: "admin"
+
   strategy:
     type: RollingUpdate
     rollingUpdate:

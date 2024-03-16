@@ -1,4 +1,5 @@
-CONFIG_FILES := ./dev_deployment/flask-deployment.yml ./dev_deployment/mongodb-deployment.yml ./dev_deployment/job-creator-role.yaml ./dev_deployment/job-creator-role-binding.yaml ./dev_deployment/redis_deployment.yml ./dev_deployment/rq-worker-deployment.yml ./dev_deployment/elastic-search.yml
+CONFIG_FILES := ./dev_deployment/flask-deployment.yml ./dev_deployment/mongodb-deployment.yml ./dev_deployment/job-creator-role.yaml ./dev_deployment/job-creator-role-binding.yaml ./dev_deployment/redis_deployment.yml ./dev_deployment/rq-worker-deployment.yml 
+# ./dev_deployment/elastic-search.yml
 NAMESPACE := default
 
 PROM_CONFIG := ./dev_deployment/prometheus-deployment.yml
@@ -10,7 +11,7 @@ k8: start-minikube \
 	apply-configs \
 	latest-backend-image \
 	latest-kb-indexer-image\
-	start-monitoring\
+	# start-monitoring\
 
 
 	minikube service python-flask-server --url
