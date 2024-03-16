@@ -1,0 +1,84 @@
+---
+
+- name: deploy entire application to Azure
+  hosts: localhost
+  vars:
+    bitnami_url: "https://charts.bitnami.com/bitnami"
+    app_namespace: default
+    monitoring_namespace: monitoring
+    version: kb-indexer:latest
+    deploy_files:
+      - templates/kb-indexer-cloud-backend.yml
+      - templates/mongodb-deployment.yml
+      - templates/job-creator-role.yaml
+      - templates/job-creator-role-binding.yaml
+      - templates/redis_deployment.yml
+      - templates/rq-worker-deployment.yml
+      - templates/ingress-monitoring.yaml
+      - templates/ingress-indexer.yaml  
+  tasks:
+    - name: "create namespace {{ app_namespace }}"
+      kubernetes.core.k8s:
+        kind: Namespace
+        name: "{{ app_namespace }}"
+        api_version: v1
+        state: present
+        kubeconfig: azure-config
+
+
+    - name: "deploy {{ item }} to k8s"
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ app_namespace }}"
+        src: "{{ item }}"
+        kubeconfig: azure-config
+      loop: "{{ deploy_files }}"
+
+    - name: Add helm repo bitnami
+      kubernetes.core.helm_repository:
+        name: bitnami
+        repo_url: "{{ bitnami_url }}"
+        kubeconfig: azure-config
+
+    
+    - name: "Deploy elastic secret"
+      kubernetes.core.k8s:
+        src: "templates/charts/elastic-secret.yml"
+        namespace: "{{ app_namespace }}"
+        kubeconfig: azure-config
+    
+    - name: "Deploy elasticsearch instance"
+      kubernetes.core.helm:
+        name: elastic
+        values_files:
+          - templates/charts/elastic-values.yml
+        chart_ref: bitnami/elasticsearch
+        release_namespace: "{{ app_namespace }}" 
+        kubeconfig: azure-config
+
+    - name: "Create namespace {{ monitoring_namespace }}"
+      kubernetes.core.k8s:
+        kind: Namespace
+        name: "{{ monitoring_namespace }}"
+        api_version: v1
+        state: present
+        kubeconfig: azure-config
+    
+    - name: "Add helm repo for prometheus"
+      kubernetes.core.helm_repository:
+        name: prometheus-community
+        repo_url: "https://prometheus-community.github.io/helm-charts"
+        kubeconfig: azure-config
+
+      
+    - name: "Deploy prometheus and grafana to cluster"
+      kubernetes.core.helm:
+        name: monitoring-stack
+        values_files:
+          - templates/charts/prometheus-values.yml
+        chart_ref: prometheus-community/kube-prometheus-stack
+        release_namespace: monitoring
+        kubeconfig: azure-config
+
+    
+    

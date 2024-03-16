@@ -7,7 +7,7 @@ By default our cluster configuration can be deployed to a pre-provisioned AKS cl
 
 azure-config contains the kubeconfig configuration for connecting to the test cluster we provisioned.
 
-After adding a .ansible-vault-pass file with the password you can run:
+After adding a .ansible-vault-pass file with the vault password you can run:
 `ansible-playbook ansible/deploy-azure.yml --vault-pass-file ansible/.ansible_vault_pass`
 
 This deploys the following architecture:
@@ -27,5 +27,5 @@ This deploys the following architecture:
 You are able to specify the environment options for each new job that is started.
 
 ELASTICSEARCH_URL = 'elastic-elasticsearch.default.svc.cluster.local'
-ELASTICSEARCH_USER = 'elastic'
+ELASTICSEARCH_USER = 'admin'
 

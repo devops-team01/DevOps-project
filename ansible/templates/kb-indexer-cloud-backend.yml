@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kb-indexer-cloud-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kb-indexer-cloud-backend
+  template:
+    metadata:
+      labels:
+        app: kb-indexer-cloud-backend
+    spec: 
+      containers:
+      - name: kb-indexer-cloud-backend
+        image: jorrithk/kb-indexer-cloud-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080 
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kb-indexer-cloud-backend
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30000
+  selector:
+    app: kb-indexer-cloud-backend

@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1 
+kind: Ingress
+metadata:
+  name: interface-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: devops.freedynamicdns.org
+      http:
+        paths:
+          - path: /(.*)
+            pathType: ImplementationSpecific 
+            backend:
+              service:
+                name: kb-indexer-cloud-backend
+                port:
+                  number: 8080
