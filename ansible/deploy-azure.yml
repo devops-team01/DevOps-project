@@ -3,6 +3,7 @@
 - name: deploy entire application to Azure
   hosts: localhost
   vars:
+    ansible_python_interpreter: /usr/bin/python3.10
     bitnami_url: "https://charts.bitnami.com/bitnami"
     app_namespace: default
     monitoring_namespace: monitoring
@@ -16,6 +17,7 @@
       - templates/rq-worker-deployment.yml
       - templates/ingress-monitoring.yaml
       - templates/ingress-indexer.yaml  
+    deployment_timestamp: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
   tasks:
     - name: "create namespace {{ app_namespace }}"
       kubernetes.core.k8s:
@@ -24,7 +26,29 @@
         api_version: v1
         state: present
         kubeconfig: azure-config
+    - name: Read login-secret YAML
+      ansible.builtin.include_vars:
+        file: templates/charts/login-secret.yml
+        name: login_secret
 
+    - name: Create login secret in Kubernetes
+      kubernetes.core.k8s:
+        kubeconfig: azure-config
+        state: present
+        namespace: "{{ app_namespace }}"
+        definition: "{{ login_secret }}"
+
+    - name: Read token-secret YAML
+      ansible.builtin.include_vars:
+        file: templates/charts/token-secret.yml
+        name: token_secret
+
+    - name: Create token secret in Kubernetes
+      kubernetes.core.k8s:
+        kubeconfig: azure-config
+        state: present
+        namespace: "{{ app_namespace }}"
+        definition: "{{ token_secret }}"
 
     - name: "deploy {{ item }} to k8s"
       kubernetes.core.k8s:
@@ -43,22 +67,11 @@
     
     - name: "Deploy elastic secret"
       kubernetes.core.k8s:
-        definition: "{{ lookup('file', 'templates/charts/elastic-secret.yml') | from_yaml }}"
+        definition: "{{ lookup('file', 'templates/charts/elastic-secret.yml') | ansible.builtin.from_yaml }}"
         namespace: "{{ app_namespace }}"
         kubeconfig: azure-config
     
-    - name: "Deploy jwt token secret"
-    kubernetes.core.k8s:
-      definition: "{{ lookup('file', 'templates/charts/token-secret.yml') | from_yaml }}"
-      namespace: "{{ app_namespace }}"
-      kubeconfig: azure-config
 
-    - name: "Deploy login secret"
-    kubernetes.core.k8s:
-      definition: "{{ lookup('file', 'templates/charts/login-secret.yml') | from_yaml }}"
-      namespace: "{{ app_namespace }}"
-      kubeconfig: azure-config
-    
     - name: "Deploy elasticsearch instance"
       kubernetes.core.helm:
         name: elastic

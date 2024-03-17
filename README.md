@@ -10,6 +10,10 @@ azure-config contains the kubeconfig configuration for connecting to the test cl
 After adding a .ansible-vault-pass file with the vault password you can run:
 `ansible-playbook ansible/deploy-azure.yml --vault-pass-file ansible/.ansible_vault_pass`
 
+This depends on:
+`ansible-galaxy collection install community.generalansible-galaxy collection install community.kubernetes
+ansible-galaxy collection install cloud.common`
+
 This deploys the following architecture:
 1. kb indexer interface container (with role and bindings)
     with:
