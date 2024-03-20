@@ -7,13 +7,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-	uses: actions/checkout@v4
-    env:
-		K8S_AUTH_KUBECONFIG: azure-config
- 	steps:
+	steps:
+  		- uses: actions/checkout@v4
 	    - run: sudo apt -y install ansible python3-kubernetes
 	    - run: /usr/bin/ansible-galaxy collection install kubernetes.core
 	    - run: /usr/bin/ansible-playbook --version
 	    - run: echo ${{ secrets.ANSIBLE_VAULT_PASSWORD }} > .vault_pass
 	    - run: /usr/bin/ansible-vault decrypt --vault-pass-file .vault_pass ansible/azure-config
 	    - run: /usr/bin/ansible-playbook --vault-pass-file .vault_pass ansible/deploy-azure.yml
+	env:
+		K8S_AUTH_KUBECONFIG: azure-config
