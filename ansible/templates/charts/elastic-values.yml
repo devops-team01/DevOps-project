@@ -27,13 +27,15 @@ elasticsearch:
     replicaCount: 1
 
   data:
-    resourcesPreset: "small"
+    resourcesPreset: "micro"
     replicaCount: 1
     persistence:
       enabled: true
 
   coordinating:
+    resourcesPreset: "nano"
     replicaCount: 0
 
   ingest:
     replicaCount: 0
+    resourcesPreset: "nano"

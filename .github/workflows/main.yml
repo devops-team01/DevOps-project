@@ -16,5 +16,5 @@ jobs:
       - run: /usr/bin/ansible-galaxy collection install kubernetes.core
       - run: /usr/bin/ansible-playbook --version
       - run: echo ${{ secrets.ANSIBLE_VAULT_PASSWORD }} > .vault_pass
-      - run: /usr/bin/ansible-vault decrypt --vault-pass-file .vault_pass azure-config
-      - run: /usr/bin/ansible-playbook --vault-pass-file .vault_pass deploy.yml
+      - run: /usr/bin/ansible-vault decrypt --vault-pass-file .vault_pass ansible/azure-config
+      - run: /usr/bin/ansible-playbook --vault-pass-file .vault_pass ansible/deploy-azure.yml
